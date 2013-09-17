@@ -1,0 +1,2 @@
+.. automodule:: dttlz.model
+   :members:
