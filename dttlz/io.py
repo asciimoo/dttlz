@@ -39,23 +39,26 @@ def dump_pickle_file(obj, filename):
         return _pickle.dump(obj, outfile)
 
 
-def _parse_csv_file(fp, delimiter=',', quotechar='"', header=True):
+def _parse_csv(fp, delimiter=',', quotechar='"', header=True, typedict=None):
     fp.seek(0)
     parser = _csv.DictReader(fp, delimiter=delimiter, quotechar=quotechar)
     data = []
     for x in parser:
+        if typedict:
+            for rowname,rowtype in typedict.items():
+                x[rowname] = rowtype(x[rowname])
         data.append(x)
     return data
 
 def load_csv(csv_string, **kwargs):
     csv_stringio = StringIO()
     csv_stringio.write(csv_string)
-    return _parse_csv_file(csv_stringio, **kwargs)
+    return _parse_csv(csv_stringio, **kwargs)
 
 
 def load_csv_file(csv_filename, **kwargs):
     with open(csv_filename, 'rb') as csv_file:
-        return _parse_csv_file(csv_file, **kwargs)
+        return _parse_csv(csv_file, **kwargs)
 
 
 def dump_csv_file(obj, filename, **kwargs):
