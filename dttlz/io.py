@@ -35,8 +35,8 @@ def dump_pickle(obj):
 
 
 def dump_pickle_file(obj, filename):
-    with open(filename, 'wb'):
-        return _pickle.dump(obj, filename)
+    with open(filename, 'wb') as outfile:
+        return _pickle.dump(obj, outfile)
 
 
 def _parse_csv_file(fp, delimiter=',', quotechar='"', header=True):
@@ -56,3 +56,20 @@ def load_csv(csv_string, **kwargs):
 def load_csv_file(csv_filename, **kwargs):
     with open(csv_filename, 'rb') as csv_file:
         return _parse_csv_file(csv_file, **kwargs)
+
+
+def dump_csv_file(obj, filename, **kwargs):
+    with open(filename, 'wb') as outfile:
+        writer = _csv.DictWriter(outfile, **kwargs)
+        if type(obj) == list:
+            writer.writerows(obj)
+        elif type(obj) == dict:
+            for key, data in obj.items():
+                data['_id'] = key
+                writer.writerow(data)
+
+def dump_csv(obj, **kwargs):
+    out = StringIO()
+    dump_csv_file(obj, out, **kwargs)
+    out.seek(0)
+    return out.read()
