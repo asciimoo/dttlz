@@ -2,7 +2,10 @@ dttlz
 =====
 
 
-a collection of useful data manipulation methods
+a collection of easy to use in-memory data manipulation methods
+
+[![Version](https://pypip.in/v/dttlz/badge.png)](https://crate.io/packages/dttlz/)   [![Downloads](https://pypip.in/d/dttlz/badge.png)](https://crate.io/packages/dttlz/)
+
 
 
 ### Installation
