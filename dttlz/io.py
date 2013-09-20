@@ -70,11 +70,12 @@ def dump_pickle_file(obj, filename):
         return _pickle.dump(obj, outfile)
 
 
-def parse_csv(fp, delimiter=',', quotechar='"', typedict=None):
+def parse_csv(fp, typedict=None, **kwargs):
     """parses csv file with DictReader
 
-    typedict defines row types (format: {'rowname': type})"""
-    parser = _csv.DictReader(fp, delimiter=delimiter, quotechar=quotechar)
+    typedict defines row types (format: {'rowname': type})
+    kwargs passed to csv.DictReader"""
+    parser = _csv.DictReader(fp, **kwargs)
     data = []
     for x in parser:
         if typedict:
