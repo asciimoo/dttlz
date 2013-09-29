@@ -56,3 +56,9 @@ def get_rows(data, indexes):
         ret[k] = new_row
 
     return ret
+
+def sort(data, key):
+    """sorting list of lists/dicts"""
+    return sorted(data, key=itemgetter(key))
+
+
