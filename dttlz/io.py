@@ -16,7 +16,45 @@ This module implements the dttlz io functions.
 import json as _json
 import pickle as _pickle
 import csv as _csv
+import os
+import fcntl
+import termios
+import struct
 from StringIO import StringIO
+
+def _getTerminalSize():
+    """get terminal width,height
+    according to http://stackoverflow.com/questions/566746/how-to-get-console-window-width-in-python"""
+    env = os.environ
+    def ioctl_GWINSZ(fd):
+        try:
+            cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
+        except:
+            return
+        return cr
+    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
+    if not cr:
+        try:
+            fd = os.open(os.ctermid(), os.O_RDONLY)
+            cr = ioctl_GWINSZ(fd)
+            os.close(fd)
+        except:
+            pass
+    if not cr:
+        cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
+    return int(cr[1]), int(cr[0])
+
+def show(data):
+    """displays list of lists/dicts formatted"""
+    width, height = _getTerminalSize()
+    if not len(data):
+        return
+    headers = data[0].keys()
+    colsize = width/len(headers)-3
+    print ' | '.join(str(row_name)[:colsize].ljust(colsize) for row_name in headers)
+    print '-+-'.join('-'*(colsize) for _ in xrange(len(headers)))
+    for row in data[:height-2]:
+        print ' | '.join(str(col)[:colsize].ljust(colsize) for col in row.values())
 
 
 def load_json(json_string, **kwargs):
