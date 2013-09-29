@@ -45,16 +45,23 @@ def _getTerminalSize():
     return int(cr[1]), int(cr[0])
 
 def show(data):
-    """displays list of lists/dicts formatted"""
+    """displays list of dicts formatted"""
+    # TODO list of lists
     width, height = _getTerminalSize()
     if not len(data):
         return
     headers = data[0].keys()
-    colsize = width/len(headers)-3
-    print ' | '.join(str(row_name)[:colsize].ljust(colsize) for row_name in headers)
-    print '-+-'.join('-'*(colsize) for _ in xrange(len(headers)))
+    colsize = width/len(headers)-7
+    colwidths = {}
     for row in data[:height-2]:
-        print ' | '.join(str(col)[:colsize].ljust(colsize) for col in row.values())
+        for rowname,rowvalue in row.items():
+            colwidths[rowname] = min(colsize, max(len(str(rowvalue)), colwidths.get(rowname, 0)))
+    print headers
+    print ',-' + '---'.join('-'*(colwidths[rowname]) for rowname in headers) + '-.'
+    print '| ' + ' | '.join(str(rowname)[:colsize].ljust(colwidths[rowname]) for rowname in headers) + ' |'
+    print '|-' + '-+-'.join('-'*(colwidths[rowname]) for rowname in headers) + '-|'
+    for row in data[:height-2]:
+        print '| ' + ' | '.join(str(col)[:colsize].ljust(colwidths[rowname]) for rowname,col in row.items()) + ' |'
 
 
 def load_json(json_string, **kwargs):
